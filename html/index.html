@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>233 游戏 在线玩</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e6e6e6;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            background: rgba(25, 25, 50, 0.8);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #ff416c, #ff4b2b, #ff7e5f);
+            animation: gradientBG 3s ease infinite;
+            background-size: 400% 400%;
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            color: #fff;
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(255, 126, 95, 0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            color: #b8c1ec;
+            max-width: 800px;
+            margin: 0 auto 25px;
+        }
+        
+        /* 官网按钮设计 */
+        .btn-container {
+            margin: 20px 0 30px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .official-btn {
+            display: inline-flex;
+            align-items: center;
+            position: relative;
+            padding: 16px 45px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: #fff;
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            border-radius: 50px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(255, 75, 43, 0.4);
+            transition: all 0.5s ease;
+            z-index: 1;
+        }
+        
+        .official-btn i {
+            margin-right: 12px;
+            transition: transform 0.3s ease;
+        }
+        
+        .official-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(255, 75, 43, 0.6);
+            color: #fff;
+        }
+        
+        .official-btn:hover i {
+            transform: translateX(5px);
+        }
+        
+        .official-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff4b2b, #ff416c);
+            z-index: -1;
+            transition: opacity 0.5s ease;
+            opacity: 1;
+        }
+        
+        .official-btn:hover::before {
+            opacity: 0;
+        }
+        
+        .official-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            z-index: -2;
+        }
+        
+        .btn-pulse {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            animation: pulse 2s infinite;
+            z-index: -1;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+            70% {
+                transform: scale(1.3);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1.3);
+                opacity: 0;
+            }
+        }
+        
+        .category-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0 10px;
+            flex-wrap: wrap;
+        }
+        
+        .category-btn {
+            padding: 12px 25px;
+            background: rgba(70, 70, 120, 0.6);
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            color: #e6e6e6;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .category-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            background: rgba(90, 90, 150, 0.7);
+        }
+        
+        .category-btn.active {
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            color: white;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .waterfall {
+            column-count: 3;
+            column-gap: 25px;
+        }
+        
+        .card {
+            break-inside: avoid;
+            margin-bottom: 25px;
+            background: rgba(30, 30, 60, 0.7);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(255, 126, 95, 0.4);
+            background: rgba(40, 40, 80, 0.8);
+        }
+        
+        .card-media {
+            width: 100%;
+            display: block;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-content {
+            padding: 20px;
+        }
+        
+        .card-title {
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            color: #ff7e5f;
+        }
+        
+        .card-desc {
+            font-size: 1rem;
+            color: #b8c1ec;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #8a94c0;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+        
+        .video-container {
+            position: relative;
+            padding-top: 56.25%;
+            background: #000;
+            cursor: pointer;
+        }
+        
+        .video-player {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.8);
+            opacity: 0.8;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        .video-container:hover .play-icon {
+            opacity: 1;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #b8c1ec;
+            font-size: 1.2rem;
+            grid-column: 1 / -1;
+        }
+        
+        .loading .spinner {
+            border: 4px solid rgba(255, 126, 95, 0.2);
+            border-top: 4px solid #ff7e5f;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #8a94c0;
+            font-size: 1rem;
+            background: rgba(25, 25, 50, 0.8);
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        @media (max-width: 1024px) {
+            .waterfall {
+                column-count: 2;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .waterfall {
+                column-count: 1;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .category-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .official-btn {
+                padding: 14px 35px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>233 游戏 在线玩</h1>
+        <p>探索精彩游戏内容，体验无限乐趣</p>
+        
+        <div class="btn-container">
+            <a href="https://www.233leyuan.com/" class="official-btn" id="official-link">
+                <i class="fas fa-gamepad"></i>
+                点击前往官网
+                <span class="btn-pulse"></span>
+            </a>
+        </div>
+        
+        <div class="category-selector">
+            <button class="category-btn active" data-category="default">
+                <i class="fas fa-globe"></i> 热门推荐
+            </button>
+            <button class="category-btn" data-category="nature">
+                <i class="fas fa-dragon"></i> 角色扮演
+            </button>
+            <button class="category-btn" data-category="animals">
+                <i class="fas fa-chess"></i> 策略游戏
+            </button>
+            <button class="category-btn" data-category="food">
+                <i class="fas fa-car"></i> 竞速游戏
+            </button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="waterfall" id="waterfall">
+            <!-- 卡片将通过JS动态生成 -->
+        </div>
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            正在加载更多内容...
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>233 游戏 &copy; 2025 | 打造极致游戏体验</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const waterfall = document.getElementById('waterfall');
+            const loading = document.getElementById('loading');
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            const officialLink = document.getElementById('official-link');
+            let isLoading = false;
+            let page = 1;
+            
+            // 模拟游戏数据
+            const mockData = {
+                default: [
+                    { 
+                        type: 'image', 
+                        title: '奇幻冒险之旅', 
+                        desc: '探索神秘世界，解开古老谜题，成为传奇英雄', 
+                        url: 'https://images.unsplash.com/photo-1534423861386-85a16f5d13fd',
+                        likes: 1242,
+                        comments: 324,
+                        date: '2025-10-15'
+                    },
+                    { 
+                        type: 'video', 
+                        title: '极限竞速：地平线', 
+                        desc: '驾驶顶级跑车，在开放世界体验速度与激情', 
+                        url: 'https://cdn.pixabay.com/video/2025/04/29/275498_tiny.mp4',
+                        likes: 2289,
+                        comments: 542,
+                        date: '2025-10-12'
+                    },
+                    { 
+                        type: 'image', 
+                        title: '星际指挥官', 
+                        desc: '建立太空舰队，征服未知星系，称霸宇宙', 
+                        url: 'https://images.unsplash.com/photo-1534447677768-be436bb09401',
+                        likes: 3325,
+                        comments: 756,
+                        date: '2025-10-10'
+                    },
+                    { 
+                        type: 'video', 
+                        title: '暗影刺客', 
+                        desc: '潜入敌人基地，完成不可能的任务，成为顶级刺客', 
+                        url: 'https://cdn.pixabay.com/video/2023/10/20/185787-876545918_tiny.mp4',
+                        likes: 1421,
+                        comments: 478,
+                        date: '2025-10-08'
+                    },
+                    { 
+                        type: 'image', 
+                        title: '魔法学院', 
+                        desc: '学习古老魔法，对抗黑暗势力，拯救魔法世界', 
+                        url: 'https://images.unsplash.com/photo-1551103782-8ab07afd45c1',
+                        likes: 2198,
+                        comments: 432,
+                        date: '2025-10-05'
+                    },
+                    { 
+                        type: 'video', 
+                        title: '末日生存', 
+                        desc: '在丧尸横行的世界中寻找资源，建立避难所，生存下去', 
+                        url: 'https://cdn.pixabay.com/video/2024/03/12/203923-922675870_tiny.mp4',
+                        likes: 3156,
+                        comments: 729,
+                        date: '2025-10-02'
+                    }
+                ],
+                nature: [
+                    { 
+                        type: 'image', 
+                        title: '龙之纪元', 
+                        desc: '成为龙骑士，与巨龙建立契约，守护王国和平', 
+                        url: 'https://images.unsplash.com/photo-1533279443086-d1c19a186416',
+                        likes: 2312,
+                        comments: 545,
+                        date: '2025-10-14'
+                    },
+                    { 
+                        type: 'video', 
+                        title: '精灵传说', 
+                        desc: '探索精灵王国，揭开古老秘密，成为森林守护者', 
+                        url: 'https://cdn.pixabay.com/video/2025/04/29/275498_tiny.mp4',
+                        likes: 1234,
+                        comments: 338,
+                        date: '2025-10-11'
+                    }
+                ],
+                animals: [
+                    { 
+                        type: 'image', 
+                        title: '帝国征服者', 
+                        title: '帝国征服者', 
+                        desc: '发展文明，建立军队，征服敌对势力，建立强大帝国', 
+                        url: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc',
+                        likes: 3478,
+                        comments: 887,
+                        date: '2025-10-13'
+                    },
+                    { 
+                        type: 'video', 
+                        title: '星际争霸', 
+                        desc: '选择种族，发展科技，指挥军队，称霸银河系', 
+                        url: 'https://cdn.pixabay.com/video/2023/10/20/185787-876545918_tiny.mp4',
+                        likes: 2324,
+                        comments: 551,
+                        date: '2025-10-09'
+                    }
+                ],
+                food: [
+                    { 
+                        type: 'image', 
+                        title: '极速狂飙', 
+                        desc: '改装赛车，参加世界巡回赛，成为顶级赛车手', 
+                        url: 'https://images.unsplash.com/photo-1514316454349-750a7fd3da3a',
+                        likes: 3267,
+                        comments: 741,
+                        date: '2025-10-16'
+                    },
+                    { 
+                        type: 'video', 
+                        title: '城市漂移', 
+                        desc: '在都市街道上展现漂移技巧，成为街头赛车传奇', 
+                        url: 'https://cdn.pixabay.com/video/2024/03/12/203923-922675870_tiny.mp4',
+                        likes: 1198,
+                        comments: 332,
+                        date: '2025-10-07'
+                    }
+                ]
+            };
+            
+            // 创建卡片元素
+            function createCard(item) {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                let media;
+                if (item.type === 'image') {
+                    media = document.createElement('img');
+                    media.className = 'card-media';
+                    media.src = item.url;
+                    media.alt = item.title;
+                    media.loading = 'lazy';
+                } else if (item.type === 'video') {
+                    const container = document.createElement('div');
+                    container.className = 'video-container';
+                    
+                    const video = document.createElement('video');
+                    video.className = 'video-player';
+                    video.src = item.url;
+                    video.poster = 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc';
+                    video.controls = false;
+                    video.loop = true;
+                    video.muted = true;
+                    
+                    const playIcon = document.createElement('div');
+                    playIcon.className = 'play-icon';
+                    playIcon.innerHTML = '<i class="fas fa-play"></i>';
+                    
+                    container.appendChild(video);
+                    container.appendChild(playIcon);
+                    media = container;
+                    
+                    // 点击播放/暂停
+                    container.addEventListener('click', function() {
+                        if (video.paused) {
+                            video.play();
+                            playIcon.innerHTML = '<i class="fas fa-pause"></i>';
+                        } else {
+                            video.pause();
+                            playIcon.innerHTML = '<i class="fas fa-play"></i>';
+                        }
+                    });
+                }
+                
+                const content = document.createElement('div');
+                content.className = 'card-content';
+                
+                const title = document.createElement('h3');
+                title.className = 'card-title';
+                title.textContent = item.title;
+                
+                const desc = document.createElement('p');
+                desc.className = 'card-desc';
+                desc.textContent = item.desc;
+                
+                const meta = document.createElement('div');
+                meta.className = 'card-meta';
+                meta.innerHTML = `
+                    <span><i class="fas fa-heart"></i> ${item.likes} 喜欢</span>
+                    <span><i class="fas fa-comment"></i> ${item.comments} 评论</span>
+                    <span><i class="fas fa-calendar"></i> ${item.date}</span>
+                `;
+                
+                content.appendChild(title);
+                content.appendChild(desc);
+                content.appendChild(meta);
+                
+                card.appendChild(media);
+                card.appendChild(content);
+                
+                return card;
+            }
+            
+            // 加载内容
+            function loadContent(category = 'default') {
+                waterfall.innerHTML = '';
+                page = 1;
+                
+                const data = mockData[category] || mockData.default;
+                
+                data.forEach(item => {
+                    const card = createCard(item);
+                    waterfall.appendChild(card);
+                });
+            }
+            
+            // 初始加载默认内容
+            loadContent();
+            
+            // 类别切换事件
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const category = this.dataset.category;
+                    
+                    // 更新按钮状态
+                    categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 加载新内容
+                    loadContent(category);
+                });
+            });
+            
+            // 滚动加载更多（模拟）
+            window.addEventListener('scroll', function() {
+                const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+                
+                if (scrollTop + clientHeight >= scrollHeight - 100 && !isLoading) {
+                    isLoading = true;
+                    loading.style.display = 'block';
+                    
+                    // 模拟加载延迟
+                    setTimeout(() => {
+                        const activeCategory = document.querySelector('.category-btn.active').dataset.category;
+                        const data = mockData[activeCategory] || mockData.default;
+                        
+                        // 添加更多内容
+                        data.forEach(item => {
+                            const newItem = {...item};
+                            newItem.title = `${item.title} (第${page+1}页)`;
+                            const card = createCard(newItem);
+                            waterfall.appendChild(card);
+                        });
+                        
+                        page++;
+                        isLoading = false;
+                        loading.style.display = 'none';
+                    }, 1500);
+                }
+            });
+            
+            // 官网链接点击效果
+            officialLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // 创建涟漪效果
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple-effect';
+                this.appendChild(ripple);
+                
+                // 获取点击位置
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // 设置涟漪位置
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                
+                // 动画结束后跳转
+                setTimeout(() => {
+                    ripple.remove();
+                    window.location.href = this.href;
+                }, 600);
+            });
+            
+            // 动态涟漪效果样式
+            const style = document.createElement('style');
+            style.innerHTML = `
+                .ripple-effect {
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.7);
+                    transform: scale(0);
+                    animation: ripple 0.6s linear;
+                    pointer-events: none;
+                    width: 100px;
+                    height: 100px;
+                    margin-top: -50px;
+                    margin-left: -50px;
+                }
+                
+                @keyframes ripple {
+                    to {
+                        transform: scale(4);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>
